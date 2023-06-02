@@ -1,0 +1,16 @@
+//~ Main font
+@font-face {
+  font-family: "JosefinSans";
+  font-weight: 700;
+  src: local("JosefinSans"),
+    url("../fonts/JosefinSans/JosefinSans-VariableFont_wght.ttf")
+      format("truetype");
+}
+
+//~ Main palette
+$blue-01: #253f66;
+$blue-02: #bbdaff;
+$light-01: #fff;
+
+//~ Font
+$font-josefin: "JosefinSans", "Gill Sans", "Gill Sans MT", "Calibri", "Trebuchet MS", sans-serif;

@@ -1,0 +1,14 @@
+.button {
+    height: 2rem;
+    padding: 0.5rem;
+
+    background-color: yellow;
+
+    &--green {
+        background-color: green;
+    }
+
+    &--red {
+        background-color: red;
+    }
+}

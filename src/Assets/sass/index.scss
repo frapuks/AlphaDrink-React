@@ -1,0 +1,7 @@
+@use './mixins.scss';
+@use './reset.scss';
+@use './vars.scss';
+
+:root {
+  font-family: vars.$font-josefin;
+}
