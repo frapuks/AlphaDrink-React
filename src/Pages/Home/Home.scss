@@ -1,0 +1,22 @@
+.block {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.categorie {
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
+  gap: 0.5rem;
+}
+
+.categorieName{
+  text-align: center;
+}
+
+.searchForm{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
