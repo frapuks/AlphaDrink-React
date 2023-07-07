@@ -2,8 +2,10 @@ import { Accordion, AccordionActions, AccordionDetails, AccordionSummary, Badge,
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useState } from "react";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const AccordionDrink = () => {
+  const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
@@ -13,6 +15,9 @@ const AccordionDrink = () => {
     event.stopPropagation();
     event.target.checked ? setLikes(likes + 1) : setLikes(likes - 1);
   };
+  const redirect = ()=>{
+    navigate("/drink");
+  }
   return (
     <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
 
@@ -29,12 +34,12 @@ const AccordionDrink = () => {
       </AccordionSummary>
 
       <AccordionDetails>
-        <Typography>Fabriquant</Typography>
+        <Typography>Fabricant</Typography>
         <Typography>Infos sur la boisson</Typography>
       </AccordionDetails>
 
       <AccordionActions>
-        <Button size="small">Plus d'infos</Button>
+        <Button size="small" onClick={redirect}>Plus d'infos</Button>
       </AccordionActions>
       
     </Accordion>
