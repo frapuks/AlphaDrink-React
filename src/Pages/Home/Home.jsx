@@ -1,5 +1,5 @@
 import { Switch, FormControlLabel, Button, TextField, Divider, Typography, Box } from "@mui/material";
-import { CardDrink, AccordionDrink } from "../../Components";
+import { AccordionDrink } from "../../Components";
 import "./Home.scss"
 
 const Home = () => {
@@ -37,26 +37,6 @@ const Home = () => {
         <AccordionDrink/>
         <AccordionDrink/>
       </Box>
-
-      <Divider />
-
-      <div className="block categorie">
-        <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-        <CardDrink />
-        <CardDrink />
-        <CardDrink />
-        <CardDrink />
-      </div>
-
-      <Divider />
-
-      <div className="block categorie">
-        <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-        <CardDrink />
-        <CardDrink />
-        <CardDrink />
-        <CardDrink />
-      </div>
 
       <Divider />
       
