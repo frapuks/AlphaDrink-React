@@ -1,5 +1,4 @@
 import "./Header.scss"
-import { Logo } from "../../Components";
 import { AppBar, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import { LocalBar } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +18,7 @@ const Header = () => {
           <LocalBar />
         </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>Alpha Drink</Typography>
-        <Button color="inherit" onClick={handleClickLogin}>Login</Button>
+        <Button color="inherit" onClick={handleClickLogin}>Se connecter</Button>
       </Toolbar>
     </AppBar>
   );
