@@ -1,11 +1,11 @@
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import "./Footer.scss"
 
 const Footer = () => {
   return (
-    <footer className="footer">
+    <Box component="footer" className="footer" position="sticky" top="100%">
       <Typography variant="overline">Footer</Typography>
-    </footer>
+    </Box>
   );
 };
 
