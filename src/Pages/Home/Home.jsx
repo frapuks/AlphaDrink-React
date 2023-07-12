@@ -1,42 +1,61 @@
-import { Switch, FormControlLabel, Button, TextField, Divider, Typography, Box } from "@mui/material";
+import { Button, TextField, Divider, Typography, Box, Stack, Tabs, Tab } from "@mui/material";
 import { AccordionDrink } from "../../Components";
 import "./Home.scss"
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 const Home = () => {
+  const navigate = useNavigate();
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log(`search : ${data.get('search')}`);
+    navigate("/search");
+  }
+
+  const [tabValue, setTabValue] = useState(0);
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+
   return (
     <>
-      <Box className="block">
-        <FormControlLabel control={<Switch />} label="Alcool" labelPlacement="start" />
+      <Box component="form" onSubmit={handleSearch}>
+        <Stack direction="row" justifyContent="center" spacing="0.5rem" sx={{m:1}}>
+          <TextField label="Tapez votre recherche..." name="search" size="small" />
+          <Button variant="contained" type="submit" autoFocus>Rechercher</Button>
+        </Stack>
       </Box>
+      
+      <Divider />
+
+      <Tabs value={tabValue} onChange={handleChange} centered>
+        <Tab label="Toutes les boissons" />
+        <Tab label="Sans alcool" />
+      </Tabs>
+      {/* <Divider /> */}
+      {/* <Typography hidden={tabValue !== 0}>Test 1</Typography> */}
+      {/* <Typography hidden={tabValue !== 1}>Test 2</Typography> */}
 
       <Divider />
 
-      <Box className="block">
-        <form action="#" className="searchForm">
-          <TextField label="Tapez votre recherche..." size="small" />
-          <Button variant="contained">Search</Button>
-        </form>
-      </Box>
+      <Stack spacing="0.5rem" sx={{m:1}}>
+        <Typography variant="h5" className="categorieName">CATEGORIE</Typography>
+        <AccordionDrink/>
+        <AccordionDrink/>
+        <AccordionDrink/>
+        <AccordionDrink/>
+      </Stack>
 
       <Divider />
 
-      <Box className="block categorie">
-        <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
+      <Stack spacing="0.5rem" sx={{m:1}}>
+        <Typography variant="h5" className="categorieName">CATEGORIE</Typography>
         <AccordionDrink/>
         <AccordionDrink/>
         <AccordionDrink/>
         <AccordionDrink/>
-      </Box>
-
-      <Divider />
-
-      <Box className="block categorie">
-        <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-        <AccordionDrink/>
-        <AccordionDrink/>
-        <AccordionDrink/>
-        <AccordionDrink/>
-      </Box>
+      </Stack>
 
       <Divider />
       
