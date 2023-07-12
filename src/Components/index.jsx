@@ -8,5 +8,7 @@ import Forms from "./Forms/Forms";
 import Input from "./Input/Input";
 import Logo from "./Logo/Logo";
 import Modale from "./Modale/Modale";
+import SearchBar from "./SearchBar/SearchBar";
+import TabsAlcool from "./TabsAlcool/TabsAlcool";
 
-export { AccordionDrink, Button, CardDrink, Comment, DrinkDetailed, Forms, Input, Logo, Modale };
+export { AccordionDrink, Button, CardDrink, Comment, DrinkDetailed, Forms, Input, Logo, Modale,SearchBar, TabsAlcool };
