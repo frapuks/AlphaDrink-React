@@ -2,8 +2,10 @@ import { Avatar, Box, Button, Container, IconButton, InputAdornment, Stack, Text
 import "./Login.scss"
 import { LockOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleSubmit = (event) => {
@@ -13,11 +15,12 @@ const Login = () => {
       email: data.get('email'),
       password: data.get('password'),
     });
+    navigate("/dashboard");
   }
   return (
     <Container sx={{ paddingTop: "2rem" }}>
-      <Stack direction="column" alignItems="center" justifyContent="space-evenly">
-        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+      <Stack direction="column" alignItems="center" justifyContent="space-evenly" spacing={3}>
+        <Avatar sx={{ bgcolor: 'primary.main' }}>
           <LockOutlined />
         </Avatar>
         <Typography component="h1" variant="h5">Sign in</Typography>
