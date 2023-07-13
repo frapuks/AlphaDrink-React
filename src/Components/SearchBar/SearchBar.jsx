@@ -14,8 +14,8 @@ const SearchBar = () => {
     <>
       <Box component="form" onSubmit={handleSearch}>
         <Stack direction="row" justifyContent="center" spacing="0.5rem" sx={{m:1}}>
-          <TextField label="Tapez votre recherche..." name="search" size="small" />
-          <Button variant="contained" type="submit" autoFocus>Rechercher</Button>
+          <TextField label="Tapez votre recherche..." name="search" size="small" required/>
+          <Button variant="contained" type="submit">Rechercher</Button>
         </Stack>
       </Box>
     </>

@@ -1,7 +1,6 @@
-import { Button, TextField, Divider, Typography, Box, Stack } from "@mui/material";
+import { Divider, Typography, Stack } from "@mui/material";
 import { AccordionDrink, SearchBar, TabsAlcool } from "../../Components";
 import "./Home.scss"
-import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 
@@ -12,7 +11,7 @@ const Home = () => {
       <Divider />
 
       <TabsAlcool/>
-      
+
       <Divider />
 
       <Stack spacing="0.5rem" sx={{m:1}}>
