@@ -3,14 +3,10 @@ import "./TabsAlcool.scss"
 import { Tab, Tabs } from "@mui/material";
 
 
-const TabsAlcool = () => {
-  const [tabValue, setTabValue] = useState(0);
-  const handleChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
+const TabsAlcool = (data) => {
   return (
     <>
-      <Tabs value={tabValue} onChange={handleChange} centered>
+      <Tabs value={data.tabValue} onChange={data.handleChange} centered>
         <Tab label="Toutes les boissons" />
         <Tab label="Sans alcool" />
       </Tabs>
