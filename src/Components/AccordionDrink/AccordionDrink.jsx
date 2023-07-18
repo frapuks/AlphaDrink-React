@@ -4,8 +4,7 @@ import { useState } from "react";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
-const AccordionDrink = (data) => {
-  const drink = data.drink;
+const AccordionDrink = ({drink}) => {
   const navigate = useNavigate();
   const [expanded, setExpanded] = useState(false);
   const handleChange = (panel) => (event, isExpanded) => {
@@ -16,8 +15,8 @@ const AccordionDrink = (data) => {
     event.stopPropagation();
     event.target.checked ? setLikes(likes + 1) : setLikes(likes - 1);
   };
-  const redirect = ()=>{
-    navigate("/drink");
+  const redirect = () => {
+    navigate(`/drink/${drink.id}`);
   }
   
   return (
@@ -27,7 +26,7 @@ const AccordionDrink = (data) => {
         <Typography sx={{ width: '50%' }}>{drink.name}</Typography>
         <Rating value={drink.averagerate} size="small"  sx={{width:"35%"}}/>
         <Badge badgeContent={likes} color="primary" >
-          <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} sx={{ padding: "0" }} size="small" onClick={handleLike} />
+          <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} sx={{ padding: "0" }} size="small" onClick={handleLike} name="favorite"/>
         </Badge>
       </AccordionSummary>
 
