@@ -168,6 +168,38 @@ const Drink = () => {
   
 
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    if (data.get('rate') == '') {return;}
+
+    const newReview = {
+      id: drink.reviews.length,
+      name: data.get("name"),
+      date: new Date().toISOString().split('T')[0],
+      content: data.get("content"),
+      rate: +data.get('rate'),
+      drink_id: drinkId,
+    }
+
+    drink.reviews.push(newReview);
+
+    const postReview = async () => {
+      const response = await fetch(`http://localhost:4100/reviews`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          name: data.get("name"),
+          rate: +data.get('rate'),
+          content: data.get("content"),
+          drink_id: drinkId,
+        })
+      });
+    }
+    postReview();
+    setOpen(false);
+  }
+
   return (
     <>
       <Box component="form" onSubmit={handleSubmitUpdate}>
