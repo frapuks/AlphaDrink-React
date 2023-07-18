@@ -6,7 +6,7 @@ const Router = [
   { id: 1, mainPath: "*", mainElement: <NoPage /> },
   { id: 2, mainPath: "/", mainElement: <Home /> },
   { id: 3, mainPath: "/login", mainElement: <Login /> },
-  { id: 4, mainPath: "/drink", mainElement: <Drink /> },
+  { id: 4, mainPath: "/drink/:drinkId", mainElement: <Drink /> },
   { id: 5, mainPath: "/dashboard", mainElement: <Dashboard /> },
   { id: 6, mainPath: "/search", mainElement: <Search /> },
 ];
