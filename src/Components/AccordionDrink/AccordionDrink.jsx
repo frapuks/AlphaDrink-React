@@ -24,8 +24,12 @@ const AccordionDrink = ({drink}) => {
       const data = await response.json();
       setLikes(data.starscounter);
     } else {
-      // TODO : add method in API to remove likes
-      setLikes(likes - 1);
+      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/removestar`, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"}
+      });
+      const data = await response.json();
+      setLikes(data.starscounter);
     }
   };
 
