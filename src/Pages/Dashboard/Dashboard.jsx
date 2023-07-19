@@ -1,13 +1,29 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Rating, Select, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Select, Snackbar, Stack, Switch, TextField, Typography } from "@mui/material";
 import "./Dashboard.scss"
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Close, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const handleClickEdit = () => {
-    navigate("/drink");
+  const [drinks, setDrinks] = useState([]);
+
+  useEffect(() => {
+    const dataFetch = async () => {
+      const response = await fetch("http://localhost:4100/categories/drinks");
+      const data = await response.json();
+      const list = [];
+      for (const category of data) {
+        category.drinks.map(drink => list.push(drink));
+      }
+      setDrinks(list);
+    };
+
+    dataFetch();
+  }, []);
+
+  const handleClickEdit = (drink) => {
+    navigate(`/drink/${drink.id}`);
   }
 
   const [open, setOpen] = useState(false);
@@ -19,33 +35,40 @@ const Dashboard = () => {
     setCategory(event.target.value);
   };
 
+  const handleChange = async (drink) => {
+    // TODO : get token
+    const token = '';
+    if (drinks.isavailable) {
+      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/unavailable`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+      });
+      if (!response.ok) setOpenSnackbar(true);
+    } else {
+      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/isavailable`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+      });
+      if (!response.ok) setOpenSnackbar(true);
+    }
+  }
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const handleCloseSnackbar = () => { setOpenSnackbar(false); };
+
   return (
     <>
       <List>
 
-        <ListItem>
-          <ListItemText primary="Boisson" />
-          <Switch/>
-          <IconButton onClick={handleClickEdit}>
-            <Edit/>
-          </IconButton>
-        </ListItem>
-        
-        <ListItem>
-          <ListItemText primary="Boisson" />
-          <Switch/>
-          <IconButton onClick={handleClickEdit}>
-            <Edit/>
-          </IconButton>
-        </ListItem>
-        
-        <ListItem>
-          <ListItemText primary="Boisson" />
-          <Switch/>
-          <IconButton onClick={handleClickEdit}>
-            <Edit/>
-          </IconButton>
-        </ListItem>
+        {drinks.map(drink =>
+          <ListItem key={drink.id}>
+            <ListItemText primary={drink.name} />
+            <Switch defaultChecked={drink.isavailable} name="isAvailable" onChange={async () => await handleChange(drink)}/>
+            <IconButton onClick={() => handleClickEdit(drink)}>
+              <Edit/>
+            </IconButton>
+          </ListItem>
+        )}
         
       </List>
 
@@ -78,6 +101,10 @@ const Dashboard = () => {
           <Button variant="contained" onClick={handleClose} autoFocus>Valider</Button>
         </DialogActions>
       </Dialog>
+
+      <Snackbar severity="error" open={openSnackbar} onClose={handleCloseSnackbar}>
+        <Alert severity="error">Erreur Serveur</Alert>
+      </Snackbar>
     </>
   );
 };
