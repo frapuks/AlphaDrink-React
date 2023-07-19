@@ -48,9 +48,20 @@ const Drink = () => {
     categoriesFetch();
   }, []);
 
-  const handleLike = (event) => {
+  // TODO : Refacto this method (duplicated in AccordionDrink)
+  const handleLike = async (event) => {
     event.stopPropagation();
-    event.target.checked ? setLikes(likes + 1) : setLikes(likes - 1);
+    if (event.target.checked) {
+      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/addstar`, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"}
+      });
+      const data = await response.json();
+      setLikes(data.starscounter);
+    } else {
+      // TODO : add method in API to remove likes
+      setLikes(likes - 1);
+    }
   };
 
   const [open, setOpen] = useState(false);

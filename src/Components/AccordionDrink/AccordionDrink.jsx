@@ -6,15 +6,29 @@ import { useNavigate } from "react-router-dom";
 
 const AccordionDrink = ({drink}) => {
   const navigate = useNavigate();
+
   const [expanded, setExpanded] = useState(false);
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
+
+  // TODO : Refacto this method (duplicated in Drink)
   const [likes, setLikes] = useState(drink.starscounter);
-  const handleLike = (event) => {
+  const handleLike = async (event) => {
     event.stopPropagation();
-    event.target.checked ? setLikes(likes + 1) : setLikes(likes - 1);
+    if (event.target.checked) {
+      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/addstar`, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json"}
+      });
+      const data = await response.json();
+      setLikes(data.starscounter);
+    } else {
+      // TODO : add method in API to remove likes
+      setLikes(likes - 1);
+    }
   };
+
   const redirect = () => {
     navigate(`/drink/${drink.id}`);
   }
