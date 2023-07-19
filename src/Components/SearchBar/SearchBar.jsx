@@ -2,14 +2,8 @@ import { useNavigate } from "react-router-dom";
 import "./SearchBar.scss"
 import { Box, Button, Stack, TextField } from "@mui/material";
 
-const SearchBar = () => {
-  const navigate = useNavigate();
-  const handleSearch = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log(`search : ${data.get('search')}`);
-    navigate("/search");
-  }
+const SearchBar = ({handleSearch}) => {
+  
   return (
     <>
       <Box component="form" onSubmit={handleSearch}>
