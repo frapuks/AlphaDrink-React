@@ -15,18 +15,18 @@ const Login = () => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const response = await fetch(`http://localhost:4100/users/login`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          email: form.get('email'),
-          password: form.get('password'),
-        })
-      });
-    console.log(response.ok);
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        email: form.get('email'),
+        password: form.get('password'),
+      })
+    });
     if (!response.ok) {
       setError(true);
       return;
     }
+    // TODO : save token
     navigate("/dashboard");
   }
 
