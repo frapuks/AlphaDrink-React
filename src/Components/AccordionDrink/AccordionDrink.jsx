@@ -32,6 +32,7 @@ const AccordionDrink = ({drink}) => {
       setLikes(data.starscounter);
     }
   };
+
   const redirect = () => {
     navigate(`/drink/${drink.id}`);
   }
