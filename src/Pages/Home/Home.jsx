@@ -2,6 +2,7 @@ import { Divider, Typography, Stack } from "@mui/material";
 import { AccordionDrink, SearchBar, TabsAlcool } from "../../Components";
 import "./Home.scss"
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [categories, setCategories] = useState();
@@ -21,10 +22,17 @@ const Home = () => {
   const handleChange = (event, newValue) => {
     setTabValue(newValue);
   };
+  
+  const navigate = useNavigate();
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    navigate(`/search/${data.get('search')}`);
+  }
 
   return (
     <>
-      <SearchBar/>
+      <SearchBar handleSearch={handleSearch}/>
 
       <Divider />
 
