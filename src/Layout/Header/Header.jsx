@@ -11,6 +11,11 @@ const Header = () => {
   const handleClickLogin = () => {
     navigate("/login");
   }
+  const handleClickLogout = () => {
+    localStorage.clear();
+    navigate("/");
+  }
+  const token = localStorage.getItem("token");
   return (
     <AppBar position="static">
       <Toolbar>
@@ -18,7 +23,10 @@ const Header = () => {
           <LocalBar />
         </IconButton>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>Alpha Drink</Typography>
-        <Button color="inherit" onClick={handleClickLogin}>Se connecter</Button>
+        {token
+          ? <Button color="inherit" onClick={handleClickLogout}>Se déconnecter</Button>
+          : <Button color="inherit" onClick={handleClickLogin}>Se connecter</Button>
+        }
       </Toolbar>
     </AppBar>
   );
