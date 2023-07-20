@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom";
 
 const Drink = () => {
   const {drinkId} = useParams();
+  const [isAdminConnected, setIsAdminConnected] = useState(false);
+  const [isUpdateMode, setIsUpdateMode] = useState(false);
   const [drink, setDrink] = useState({
     "id": 0,
     "name": "",
@@ -31,6 +33,10 @@ const Drink = () => {
   const [categories, setCategories] = useState([{"id": 1, "name": "divers"}]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    const isAdmin = localStorage.getItem('isAdmin');
+    setIsAdminConnected(token && isAdmin ? true : false);
+
     const drinkFetch = async () => {
       const response = await fetch(`http://localhost:4100/drinks/${drinkId}/reviews`);
       const drink = await response.json();
@@ -104,66 +110,127 @@ const Drink = () => {
     setOpen(false);
   }
 
+  const handleUpdate = () => {setIsUpdateMode(true);}
+  const handleCloseUpdate = () => {setIsUpdateMode(false);}
+
+  const handleSubmitUpdate = async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
+      body: JSON.stringify({
+        "name": form.get("name"),
+        "maker": form.get("maker"),
+        "infos": form.get("infos"),
+        "isalcool": form.get("isAlcool") === 'on'
+      })
+    });
+    const data = await response.json();
+    const newDrink = {...data, reviews: drink.reviews};
+    setDrink(newDrink);
+    setIsUpdateMode(false);
+  }
+  
+
   return (
     <>
-      <Typography variant="h3" sx={{ textAlign: "center", fontWeight: "bold" }}>{drink.name}</Typography>
+      <Box component="form" onSubmit={handleSubmitUpdate}>
 
-      <Container sx={{ padding: "1rem" }}>
-
-        <Stack direction="row">
-          <Typography sx={{ fontWeight: "bold" }}>Compteur :</Typography>
-          <Badge badgeContent={likes} color="primary" >
-            <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} sx={{ padding: "0" }} size="small" onClick={handleLike} name="favorite"/>
-          </Badge>
-        </Stack>
-
-        <Stack direction="row">
-          <Typography sx={{ fontWeight: "bold" }}>Note Moyenne :</Typography>
-          <Rating value={drink.averagerate} />
-        </Stack>
-
-        {drink.isalcool &&
-          <Stack direction="row">
-              <SportsBar />
-              <Typography sx={{ fontWeight: "bold" }}>Alcool</Typography>
-          </Stack>
-        }
-        {!drink.isalcool &&
-          <Stack direction="row">
-              <LocalDrink />
-              <Typography sx={{ fontWeight: "bold" }}>Sans Alcool</Typography>
-          </Stack>
+        {isAdminConnected && isUpdateMode
+          ? (
+            <Stack direction="row" justifyContent="center" alignItems="center" gap={"1rem"} sx={{marginTop:"1rem"}}>
+              <Typography>Nom :</Typography>
+              <TextField name="name" size="small" label="Nom de la boisson" defaultValue={drink.name} required/>
+            </Stack>
+          )
+          : <Typography variant="h3" sx={{ textAlign: "center", fontWeight: "bold" }}>{drink.name}</Typography>
         }
 
-        {drink.isavailable &&
+        
+
+        <Container sx={{ padding: "1rem" }}>
+
           <Stack direction="row">
-            <CheckCircle />
-            <Typography sx={{ fontWeight: "bold" }}>Disponible</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>Compteur :</Typography>
+            <Badge badgeContent={likes} color="primary" >
+              <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} sx={{ padding: "0" }} size="small" onClick={handleLike} name="favorite"/>
+            </Badge>
           </Stack>
-        }        
-        {!drink.isavailable &&
+
           <Stack direction="row">
-            <Cancel />
-            <Typography sx={{ fontWeight: "bold" }}>Non disponible</Typography>
+            <Typography sx={{ fontWeight: "bold" }}>Note Moyenne :</Typography>
+            <Rating value={drink.averagerate} />
           </Stack>
-        }
 
-        <Typography>
-          <Box component="span" sx={{ fontWeight: "bold" }}>Catégorie : </Box>
-          {categories.map(category => (category.id === drink.category_id && category.name))}
-        </Typography>
+          <Stack direction="row">
+            {drink.isavailable ? <CheckCircle /> : <Cancel />}
+            <Typography sx={{ fontWeight: "bold" }}>{drink.isavailable ? "Disponible" : "Non disponible"}</Typography>
+          </Stack>
 
-        <Typography>
-          <Box component="span" sx={{ fontWeight: "bold" }}>Fabricant : </Box>
-          {drink.maker}
-        </Typography>
+          <Typography>
+            <Box component="span" sx={{ fontWeight: "bold" }}>Catégorie : </Box>
+            {categories.map(category => (category.id === drink.category_id && category.name))}
+          </Typography>
 
-        <Typography>
-          <Box component="span" sx={{ fontWeight: "bold" }}>Infos : </Box>
-          {drink.infos}
-        </Typography>
+          {isAdminConnected && isUpdateMode
+            ? (
+              <Stack direction="row" alignItems="center">
+                <Typography>Alcool :</Typography>
+                <Switch name="isAlcool" defaultChecked={drink.isalcool}/>
+              </Stack>
+            ) : (
+              <Stack direction="row">
+                {drink.isalcool ? <SportsBar /> : <LocalDrink />}
+                <Typography sx={{ fontWeight: "bold" }}>{drink.isalcool ? "Alcool" : "Sans Alcool"}</Typography>
+              </Stack>
+            )
+          }
 
-      </Container>
+          {isAdminConnected && isUpdateMode
+            ? (
+              <Stack direction="row" alignItems="center" gap={"1rem"}>
+                <Typography>Fabricant :</Typography>
+                <TextField name="maker" size="small" label="Fabricant" defaultValue={drink.maker} required/>
+              </Stack>
+            ) : (
+              <Typography>
+                <Box component="span" sx={{ fontWeight: "bold" }}>Fabricant : </Box>
+                {drink.maker}
+              </Typography>
+            )
+          }
+
+          {isAdminConnected && isUpdateMode
+            ? (
+              <Stack direction="row" gap={"1rem"} sx={{marginTop:"0.5rem"}}>
+                <Typography>Infos :</Typography>
+                <TextField name="infos" multiline rows={2} label="Infos" defaultValue={drink.infos} required/>
+              </Stack>
+            ) : (
+              <Typography>
+                <Box component="span" sx={{ fontWeight: "bold" }}>Infos : </Box>
+                {drink.infos}
+              </Typography>
+            )
+          }
+
+          {isAdminConnected && isUpdateMode
+            ? (
+              <Stack direction="row" justifyContent="center" gap={"1rem"} sx={{marginTop:"0.5rem"}}>
+                <Button onClick={handleCloseUpdate}>Annuler</Button>
+                <Button type="submit" variant="contained" autoFocus>Valider</Button>
+              </Stack>
+            ) : (
+              <Stack direction="row" justifyContent="center">
+                <Button onClick={handleUpdate}>Update</Button>
+              </Stack>
+            )
+          }
+
+        </Container>
+      </Box>
 
 
       <Divider />

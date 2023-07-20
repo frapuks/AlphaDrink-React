@@ -28,6 +28,7 @@ const Login = () => {
     }
     const data = await response.json();
     localStorage.setItem("token", data.token);
+    localStorage.setItem("isAdmin", data.user.isadmin);
     navigate("/dashboard");
   }
 
