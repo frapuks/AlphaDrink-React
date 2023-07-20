@@ -36,8 +36,7 @@ const Dashboard = () => {
   };
 
   const handleChange = async (drink) => {
-    // TODO : get token
-    const token = '';
+    const token = localStorage.getItem("token");
     if (drinks.isavailable) {
       const response = await fetch(`http://localhost:4100/drinks/${drink.id}/unavailable`, {
         method: "PATCH",
