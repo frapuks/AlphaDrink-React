@@ -1,10 +1,12 @@
-import { Badge, Box, Button, Card, CardContent, CardHeader, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fab, FormControl, FormControlLabel, Rating, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Badge, Box, Button, Card, CardActions, CardContent, CardHeader, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fab, FormControl, FormControlLabel, Rating, SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, Switch, TextField, Typography } from "@mui/material";
 import "./Drink.scss"
-import { Favorite, FavoriteBorder, EditNote, Check, Close, SportsBar, LocalDrink, CheckCircle, Cancel } from "@mui/icons-material";
+import { Favorite, FavoriteBorder, EditNote, Check, Close, SportsBar, LocalDrink, CheckCircle, Cancel, FileCopy, Save, Print, Share, Delete, Edit } from "@mui/icons-material";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { red } from "@mui/material/colors";
 
 const Drink = () => {
+  const navigate = useNavigate();
   const {drinkId} = useParams();
   const [isAdminConnected, setIsAdminConnected] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
@@ -77,6 +79,10 @@ const Drink = () => {
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => { setOpen(true); };
   const handleClose = () => { setOpen(false); };
+  
+  const [openDelete, setOpenDelete] = useState(false);
+  const handleClickOpenDelete = () => { setOpenDelete(true); };
+  const handleCloseDelete = () => { setOpenDelete(false); };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -133,6 +139,34 @@ const Drink = () => {
     setIsUpdateMode(false);
   }
   
+  const handleDeleteReview = async (reviewId) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/reviews/${reviewId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+    });
+    if (!response.ok) {
+      return;
+    }
+    const reviews = drink.reviews.filter(review => review.id !== reviewId);
+    const newDrink = {...drink, reviews: reviews};
+    console.log(newDrink);
+    setDrink(newDrink);
+  }
+  
+  const handleDeleteDrink = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+    });
+    if (!response.ok) {
+      return;
+    }
+    navigate("/")
+  }
+  
+
 
   return (
     <>
@@ -220,6 +254,7 @@ const Drink = () => {
             ? (
               <Stack direction="row" justifyContent="center" gap={"1rem"} sx={{marginTop:"0.5rem"}}>
                 <Button onClick={handleCloseUpdate}>Annuler</Button>
+                <Button variant="contained" color="error" onClick={handleClickOpenDelete}>Supprimer</Button>
                 <Button type="submit" variant="contained" autoFocus>Valider</Button>
               </Stack>
             ) : (
@@ -248,6 +283,11 @@ const Drink = () => {
             <CardContent sx={{ backgroundColor: 'teal', margin: "0.5rem", borderRadius: "10px" }}>
               <Typography variant="body2" sx={{ fontStyle: "italic", color: "white" }}>{review.content}</Typography>
             </CardContent>
+            <CardActions>
+              <SpeedDial ariaLabel="SpeedDial" icon={<SpeedDialIcon/>} direction="right" FabProps={{sx:{bgcolor:"red", '&:hover': {bgcolor: "red"}}}}>
+                <SpeedDialAction icon={<Delete/>} tooltipTitle="Supprimer" onClick={() => {handleDeleteReview(review.id)}}/>
+              </SpeedDial>
+            </CardActions>
           </Card>
         )}
 
@@ -276,6 +316,16 @@ const Drink = () => {
             <Button type="submit" variant="contained" autoFocus>Valider</Button>
           </DialogActions>
         </Box>
+      </Dialog>
+
+      <Dialog open={openDelete} onClose={handleCloseDelete}>
+        <DialogContent sx={{ display: 'flex', flexDirection:"column", gap:"0.5rem"}}>
+          <Typography>Etes vous sur de vouloir supprimer cette boisson ?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDelete}>Non</Button>
+          <Button variant="contained" color="error" onClick={handleDeleteDrink}>Oui</Button>
+        </DialogActions>
       </Dialog>
 
     </>
