@@ -39,19 +39,14 @@ const Dashboard = () => {
 
   const handleChange = async (drink) => {
     const token = localStorage.getItem("token");
-    if (drinks.isavailable) {
-      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/unavailable`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
-      });
-      if (!response.ok) setOpenSnackbar(true);
-    } else {
-      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/isavailable`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
-      });
-      if (!response.ok) setOpenSnackbar(true);
-    }
+    const endUrl = drink.isavailable ? 'unavailable' : 'isavailable';
+    const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+    });
+    if (!response.ok) setOpenSnackbar(true);
+    const data = await response.json();
+    drinks.find(elem => elem.id === drink.id && (elem.isavailable = data.isavailable));
   }
 
   const [openSnackbar, setOpenSnackbar] = useState(false);
