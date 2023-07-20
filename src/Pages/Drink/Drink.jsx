@@ -200,6 +200,30 @@ const Drink = () => {
     setOpen(false);
   }
 
+  const handleUpdate = () => {setIsUpdateMode(true);}
+  const handleCloseUpdate = () => {setIsUpdateMode(false);}
+
+  const handleSubmitUpdate = async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
+      body: JSON.stringify({
+        "name": form.get("name"),
+        "maker": form.get("maker"),
+        "infos": form.get("infos"),
+        "isalcool": form.get("isAlcool") === 'on'
+      })
+    });
+    const data = await response.json();
+    const newDrink = {...data, reviews: drink.reviews};
+    setDrink(newDrink);
+    setIsUpdateMode(false);
+  }
+  
+
   return (
     <>
       <Box component="form" onSubmit={handleSubmitUpdate}>
