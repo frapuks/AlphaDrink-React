@@ -26,7 +26,8 @@ const Login = () => {
       setError(true);
       return;
     }
-    // TODO : save token
+    const data = await response.json();
+    localStorage.setItem("token", data.token);
     navigate("/dashboard");
   }
 
