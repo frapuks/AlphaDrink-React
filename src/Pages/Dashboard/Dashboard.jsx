@@ -1,4 +1,4 @@
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Select, Snackbar, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Select, Snackbar, Stack, Switch, TextField, Typography } from "@mui/material";
 import "./Dashboard.scss"
 import { Add, Close, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +6,9 @@ import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState([{"id": 1,"name": "divers"}]);
   const [drinks, setDrinks] = useState([]);
-
+  
   useEffect(() => {
     const dataFetch = async () => {
       const response = await fetch("http://localhost:4100/categories/drinks");
@@ -16,6 +17,7 @@ const Dashboard = () => {
       for (const category of data) {
         category.drinks.map(drink => list.push(drink));
       }
+      setCategories(data);
       setDrinks(list);
     };
 
@@ -30,9 +32,9 @@ const Dashboard = () => {
   const handleClickOpen = () => { setOpen(true); };
   const handleClose = () => { setOpen(false); };
 
-  const [category, setCategory] = useState('');
+  const [categoryId, setCategoryId] = useState(1);
   const handleCategory = (event) => {
-    setCategory(event.target.value);
+    setCategoryId(event.target.value);
   };
 
   const handleChange = async (drink) => {
@@ -55,6 +57,26 @@ const Dashboard = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const handleCloseSnackbar = () => { setOpenSnackbar(false); };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/drinks`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
+      body: JSON.stringify({
+        "name": form.get("name"),
+        "maker": form.get("maker"),
+        "infos": form.get("infos"),
+        "isalcool": form.get("isAlcool") === 'on',
+        "category_id": categoryId
+      })
+    });
+    const data = await response.json();
+    drinks.push(data);
+    setOpen(false);
+  }
+
   return (
     <>
       <List>
@@ -76,29 +98,27 @@ const Dashboard = () => {
       </Fab>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Ajouter une boisson</DialogTitle>
-        <DialogContent sx={{ display: 'flex', flexDirection:"column", gap:"0.5rem"}}>
-          <TextField size="small" label="Nom de la boisson" sx={{marginTop: "0.5rem"}}/>
-          <TextField size="small" label="Fabricant"/>
-          <TextField multiline rows={4} label="Infos"/>
-          <Select size="small" value={category} onChange={handleCategory}>
-            <MenuItem value="category1">Catégorie 1</MenuItem>
-            <MenuItem value="category2">Catégorie 2</MenuItem>
-            <MenuItem value="category3">Catégorie 3</MenuItem>
-          </Select>
-          <Stack direction="row" alignItems="center">
-            <Typography>Alcool :</Typography>
-            <Switch/>
-          </Stack>
-          <Stack direction="row" alignItems="center">
-            <Typography>Disponible :</Typography>
-            <Switch/>
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Annuler</Button>
-          <Button variant="contained" onClick={handleClose} autoFocus>Valider</Button>
-        </DialogActions>
+        <Box component="form" onSubmit={handleSubmit}>
+          <DialogTitle>Ajouter une boisson</DialogTitle>
+          <DialogContent sx={{ display: 'flex', flexDirection:"column", gap:"0.5rem"}}>
+            <TextField name="name" autoComplete="name" size="small" label="Nom de la boisson" sx={{marginTop: "0.5rem"}} required/>
+            <TextField name="maker" size="small" label="Fabricant" required/>
+            <TextField name="infos" multiline rows={4} label="Infos" required/>
+            <Select name="category" size="small" value={categoryId} onChange={handleCategory} required>
+              {categories.map(category =>
+                <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
+              )}
+            </Select>
+            <Stack direction="row" alignItems="center">
+              <Typography>Alcool :</Typography>
+              <Switch name="isAlcool"/>
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Annuler</Button>
+            <Button type="submit" variant="contained" autoFocus>Valider</Button>
+          </DialogActions>
+        </Box>
       </Dialog>
 
       <Snackbar severity="error" open={openSnackbar} onClose={handleCloseSnackbar}>
