@@ -96,7 +96,7 @@ const Dashboard = () => {
         <Box component="form" onSubmit={handleSubmit}>
           <DialogTitle>Ajouter une boisson</DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection:"column", gap:"0.5rem"}}>
-            <TextField name="name" autoComplete="name" size="small" label="Nom de la boisson" sx={{marginTop: "0.5rem"}} required/>
+            <TextField name="name" size="small" label="Nom de la boisson" sx={{marginTop: "0.5rem"}} required/>
             <TextField name="maker" size="small" label="Fabricant" required/>
             <TextField name="infos" multiline rows={4} label="Infos" required/>
             <Select name="category" size="small" value={categoryId} onChange={handleCategory} required>
