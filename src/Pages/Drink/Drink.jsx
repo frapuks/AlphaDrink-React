@@ -223,6 +223,34 @@ const Drink = () => {
     setIsUpdateMode(false);
   }
   
+  const handleDeleteReview = async (reviewId) => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/reviews/${reviewId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+    });
+    if (!response.ok) {
+      return;
+    }
+    const reviews = drink.reviews.filter(review => review.id !== reviewId);
+    const newDrink = {...drink, reviews: reviews};
+    console.log(newDrink);
+    setDrink(newDrink);
+  }
+  
+  const handleDeleteDrink = async () => {
+    const token = localStorage.getItem("token");
+    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
+    });
+    if (!response.ok) {
+      return;
+    }
+    navigate("/")
+  }
+  
+
 
   return (
     <>
