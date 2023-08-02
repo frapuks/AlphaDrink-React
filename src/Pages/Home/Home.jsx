@@ -1,64 +1,56 @@
-import { Switch, FormControlLabel, Button,TextField, Divider, Typography, Box } from "@mui/material";
-import { CardDrink } from "../../Components";
+import { Divider, Typography, Stack } from "@mui/material";
+import { AccordionDrink, SearchBar, TabsAlcool } from "../../Components";
 import "./Home.scss"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+  const [categories, setCategories] = useState();
+
+  useEffect(() => {
+    const dataFetch = async () => {
+      const response = await fetch("http://localhost:4100/categories/drinks");
+      const data = await response.json();
+      setCategories(data);
+    };
+
+    dataFetch();
+  }, []);
+
+  
+  const [tabValue, setTabValue] = useState(0);
+  const handleChange = (event, newValue) => {
+    setTabValue(newValue);
+  };
+  
+  const navigate = useNavigate();
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    navigate(`/search/${data.get('search')}`);
+  }
+
   return (
     <>
-    <Box className="block">
-      <FormControlLabel control={<Switch />} label="Alcool" labelPlacement="start"/>      
-    </Box>
+      <SearchBar handleSearch={handleSearch}/>
 
-    <Divider/>
+      <Divider />
 
-    <Box className="block">
-      <form action="#" className="searchForm">
-        <TextField label="Tapez votre recherche..." size="small"/>
-        <Button variant="contained">Search</Button>
-      </form>
-    </Box>
+      <TabsAlcool tabValue={tabValue} handleChange={handleChange}/>
 
-    <Divider/>
+      <Divider />
 
-    <Box className="block categorie">
-      <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-    </Box>
+      {categories && categories.map(category => ( (tabValue === 0 || category.drinks.find(drink => !drink.isalcool)) &&
+          <Stack spacing="0.5rem" sx={{m:1}} key={category.id}>
+            <Typography variant="h5" className="categorieName" sx={{textTransform:"uppercase"}}>{category.name}</Typography>
 
-    <Divider/>
+            {category.drinks.map(drink => ( (tabValue === 0 || !drink.isalcool) &&
+              <AccordionDrink drink={drink} key={drink.id}/>
+            ))}
 
-    <div className="block categorie">
-      <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-    </div>
-
-    <Divider/>
-
-    <div className="block categorie">
-      <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-    </div>
-
-    <Divider/>
-
-    <div className="block categorie">
-      <Typography variant="h4" className="categorieName">CATEGORIE</Typography>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-      <CardDrink/>
-    </div>
-
-    <Divider/>
+            <Divider/>
+          </Stack>
+      ))}
     </>
   );
 };
