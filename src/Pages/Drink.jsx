@@ -147,98 +147,9 @@ const Drink = () => {
     });
     const data = await response.json();
     setLikes(data.starscounter);
-  };
-
-  
-<<<<<<< HEAD:src/Pages/Drink/Drink.jsx
+  };  
 
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    if (data.get('rate') == '') {return;}
-
-    const newReview = {
-      id: drink.reviews.length,
-      name: data.get("name"),
-      date: new Date().toISOString().split('T')[0],
-      content: data.get("content"),
-      rate: +data.get('rate'),
-      drink_id: drinkId,
-    }
-
-    drink.reviews.push(newReview);
-
-    const postReview = async () => {
-      const response = await fetch(`http://localhost:4100/reviews`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          name: data.get("name"),
-          rate: +data.get('rate'),
-          content: data.get("content"),
-          drink_id: drinkId,
-        })
-      });
-    }
-    postReview();
-    setOpen(false);
-  }
-
-  const handleUpdate = () => {setIsUpdateMode(true);}
-  const handleCloseUpdate = () => {setIsUpdateMode(false);}
-
-  const handleSubmitUpdate = async (event) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
-      body: JSON.stringify({
-        "name": form.get("name"),
-        "maker": form.get("maker"),
-        "infos": form.get("infos"),
-        "isalcool": form.get("isAlcool") === 'on'
-      })
-    });
-    const data = await response.json();
-    const newDrink = {...data, reviews: drink.reviews};
-    setDrink(newDrink);
-    setIsUpdateMode(false);
-  }
-  
-  const handleDeleteReview = async (reviewId) => {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:4100/reviews/${reviewId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
-    });
-    if (!response.ok) {
-      return;
-    }
-    const reviews = drink.reviews.filter(review => review.id !== reviewId);
-    const newDrink = {...drink, reviews: reviews};
-    console.log(newDrink);
-    setDrink(newDrink);
-  }
-  
-  const handleDeleteDrink = async () => {
-    const token = localStorage.getItem("token");
-    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
-    });
-    if (!response.ok) {
-      return;
-    }
-    navigate("/")
-  }
-  
-
-
-=======
->>>>>>> 21cbc87 (refactor(all): delete unused files & simplify architecture):src/Pages/Drink.jsx
   return (
     <>
       <Box component="form" onSubmit={handleSubmitUpdate}>
