@@ -45,7 +45,7 @@ Avec cette application, tout le monde est gagnant :
 - Bouton de connexion
 
 ![Page d'accueil](./doc/images/home.png)
-![Page d'accueil sans alcool](./doc\images\home_without_alcool.png)
+![Page d'accueil sans alcool](./doc/images/home_without_alcool.png)
 
 # Page de recherche
 
@@ -53,7 +53,7 @@ Avec cette application, tout le monde est gagnant :
 - Filtrage avec ou sans alcool
 - Formulaire de recherche
 
-![Page de recherche](./doc\images\search.png)
+![Page de recherche](./doc/images/search.png)
 
 # Page d'une boisson
 
@@ -63,8 +63,8 @@ Avec cette application, tout le monde est gagnant :
 - Formulaire de modification/suppression d'une boisson (Admin uniquement)
 - Bouton de suppression d'un commentaire (Admin uniquement)
 
-![Page d'une boisson](./doc\images\drink.png)
-![Page d'une boisson avec formulaire](./doc\images\drink_dialog.png)
+![Page d'une boisson](./doc/images/drink.png)
+![Page d'une boisson avec formulaire](./doc/images/drink_dialog.png)
 
 # Page de connexion
 
@@ -72,7 +72,7 @@ Avec cette application, tout le monde est gagnant :
 - Formulaire de connexion
 - Affichage/Masquage du mot de passe
 
-![Page de connexion](./doc\images\login.png)
+![Page de connexion](./doc/images/login.png)
 
 # Dashboard
 
@@ -82,5 +82,5 @@ Avec cette application, tout le monde est gagnant :
 - Bouton d'édition revoyant vers la page d'une boisson
 - Bouton d'action permettant d'ajouter une boisson
 
-![Dashboard](./doc\images\dashboard.png)
-![Dashboard avec formulaire](./doc\images\dashboard_dialog.png)
+![Dashboard](./doc/images/dashboard.png)
+![Dashboard avec formulaire](./doc/images/dashboard_dialog.png)
