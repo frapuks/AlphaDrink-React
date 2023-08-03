@@ -2,7 +2,6 @@
 import { Routes, Route } from "react-router-dom";
 import { mainRoutes } from "../Routes/Routes";
 import Layout from '../Layout/Layout';
-import "./App.scss";
 
 const App = () => {
   return (

@@ -1,15 +1,24 @@
-import { Badge, Box, Button, Card, CardActions, CardContent, CardHeader, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fab, FormControl, FormControlLabel, Rating, SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, Switch, TextField, Typography } from "@mui/material";
-import "./Drink.scss"
-import { Favorite, FavoriteBorder, EditNote, Check, Close, SportsBar, LocalDrink, CheckCircle, Cancel, FileCopy, Save, Print, Share, Delete, Edit } from "@mui/icons-material";
+import { Badge, Box, Button, Card, CardActions, CardContent, CardHeader, Checkbox, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fab, Rating, SpeedDial, SpeedDialAction, SpeedDialIcon, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Favorite, FavoriteBorder, EditNote, SportsBar, LocalDrink, CheckCircle, Cancel, Delete } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { red } from "@mui/material/colors";
 
 const Drink = () => {
+  // Utils
   const navigate = useNavigate();
+  
+  // Variables
   const {drinkId} = useParams();
+  const token = localStorage.getItem("token");
+  const isAdmin = localStorage.getItem('isAdmin');
+  
+  // States
   const [isAdminConnected, setIsAdminConnected] = useState(false);
   const [isUpdateMode, setIsUpdateMode] = useState(false);
+  const [likes, setLikes] = useState(0);
+  const [categories, setCategories] = useState([{"id": 1, "name": "divers"}]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [drink, setDrink] = useState({
     "id": 0,
     "name": "",
@@ -22,21 +31,18 @@ const Drink = () => {
     "category_id": 1,
     "reviews": [
       {
-        "id": 1,
-        "name": "Francois",
-        "date": "2022-12-12",
-        "content": "A vos risques et perils",
+        "id": 0,
+        "name": "Exemple",
+        "date": "2000-01-01",
+        "content": "Exemple",
         "rate": 1,
         "drink_id": 1
       }
     ]
   });
-  const [likes, setLikes] = useState(0);
-  const [categories, setCategories] = useState([{"id": 1, "name": "divers"}]);
-
+  
+  // UseEffect
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const isAdmin = localStorage.getItem('isAdmin');
     setIsAdminConnected(token && isAdmin ? true : false);
 
     const drinkFetch = async () => {
@@ -55,36 +61,16 @@ const Drink = () => {
     drinkFetch();
     categoriesFetch();
   }, []);
-
-  // TODO : Refacto this method (duplicated in AccordionDrink)
-  const handleLike = async (event) => {
-    event.stopPropagation();
-    if (event.target.checked) {
-      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/addstar`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"}
-      });
-      const data = await response.json();
-      setLikes(data.starscounter);
-    } else {
-      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/removestar`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"}
-      });
-      const data = await response.json();
-      setLikes(data.starscounter);
-    }
-  };
-
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => { setOpen(true); };
-  const handleClose = () => { setOpen(false); };
   
-  const [openDelete, setOpenDelete] = useState(false);
+  // Methods
+  const handleClickOpenDialog = () => { setOpenDialog(true); };
+  const handleCloseDialog = () => { setOpenDialog(false); };
   const handleClickOpenDelete = () => { setOpenDelete(true); };
   const handleCloseDelete = () => { setOpenDelete(false); };
-
-  const handleSubmit = (event) => {
+  const handleUpdate = () => {setIsUpdateMode(true);}
+  const handleCloseUpdate = () => {setIsUpdateMode(false);}
+  
+  const handleSubmitReview = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     if (data.get('rate') == '') {return;}
@@ -97,32 +83,24 @@ const Drink = () => {
       rate: +data.get('rate'),
       drink_id: drinkId,
     }
-
     drink.reviews.push(newReview);
 
-    const postReview = async () => {
-      const response = await fetch(`http://localhost:4100/reviews`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          name: data.get("name"),
-          rate: +data.get('rate'),
-          content: data.get("content"),
-          drink_id: drinkId,
-        })
-      });
-    }
-    postReview();
+    const response = await fetch(`http://localhost:4100/reviews`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        name: data.get("name"),
+        rate: +data.get('rate'),
+        content: data.get("content"),
+        drink_id: drinkId,
+      })
+    });
     setOpen(false);
   }
-
-  const handleUpdate = () => {setIsUpdateMode(true);}
-  const handleCloseUpdate = () => {setIsUpdateMode(false);}
 
   const handleSubmitUpdate = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const token = localStorage.getItem("token");
     const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
@@ -140,34 +118,38 @@ const Drink = () => {
   }
   
   const handleDeleteReview = async (reviewId) => {
-    const token = localStorage.getItem("token");
     const response = await fetch(`http://localhost:4100/reviews/${reviewId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
     });
-    if (!response.ok) {
-      return;
-    }
+    if (!response.ok) { return; }
     const reviews = drink.reviews.filter(review => review.id !== reviewId);
     const newDrink = {...drink, reviews: reviews};
-    console.log(newDrink);
     setDrink(newDrink);
   }
   
   const handleDeleteDrink = async () => {
-    const token = localStorage.getItem("token");
     const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
     });
-    if (!response.ok) {
-      return;
-    }
+    if (!response.ok) { return; }
     navigate("/")
   }
+
+  // TODO : Refacto this method (duplicated in AccordionDrink)
+  const handleLike = async (event) => {
+    event.stopPropagation();
+    const endUrl = event.target.checked ? 'addstar' : 'removestar';
+    const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json"}
+    });
+    const data = await response.json();
+    setLikes(data.starscounter);
+  };
+
   
-
-
   return (
     <>
       <Box component="form" onSubmit={handleSubmitUpdate}>
@@ -181,8 +163,6 @@ const Drink = () => {
           )
           : <Typography variant="h3" sx={{ textAlign: "center", fontWeight: "bold" }}>{drink.name}</Typography>
         }
-
-        
 
         <Container sx={{ padding: "1rem" }}>
 
@@ -250,18 +230,17 @@ const Drink = () => {
             )
           }
 
-          {isAdminConnected && isUpdateMode
-            ? (
-              <Stack direction="row" justifyContent="center" gap={"1rem"} sx={{marginTop:"0.5rem"}}>
-                <Button onClick={handleCloseUpdate}>Annuler</Button>
-                <Button variant="contained" color="error" onClick={handleClickOpenDelete}>Supprimer</Button>
-                <Button type="submit" variant="contained" autoFocus>Valider</Button>
-              </Stack>
-            ) : (
-              <Stack direction="row" justifyContent="center">
-                <Button onClick={handleUpdate}>Update</Button>
-              </Stack>
-            )
+          {isAdminConnected && isUpdateMode &&
+            <Stack direction="row" justifyContent="center" gap={"1rem"} sx={{marginTop:"0.5rem"}}>
+              <Button onClick={handleCloseUpdate}>Annuler</Button>
+              <Button variant="contained" color="error" onClick={handleClickOpenDelete}>Supprimer</Button>
+              <Button type="submit" variant="contained" autoFocus>Valider</Button>
+            </Stack>
+          }
+          {isAdminConnected && !isUpdateMode &&
+            <Stack direction="row" justifyContent="center">
+              <Button onClick={handleUpdate}>Update</Button>
+            </Stack>
           }
 
         </Container>
@@ -273,32 +252,34 @@ const Drink = () => {
 
       <Typography variant="h5" sx={{ textAlign: "center", fontWeight: "bold", marginTop: "1rem" }}>COMMENTAIRES</Typography>
 
-      <Stack spacing="1rem" sx={{ padding: "1rem" }}>
+      <Container sx={{ padding: "1rem" }}>
+        <Stack spacing="1rem">
 
-        {drink.reviews[0] && drink.reviews.map(review => 
-          <Card key={review.id}>
-            <CardHeader title={`Par ${review.name}`} subheader={review.date} action={
-              <Rating value={review.rate} />
-            } />
-            <CardContent sx={{ backgroundColor: 'teal', margin: "0.5rem", borderRadius: "10px" }}>
-              <Typography variant="body2" sx={{ fontStyle: "italic", color: "white" }}>{review.content}</Typography>
-            </CardContent>
-            <CardActions>
-              <SpeedDial ariaLabel="SpeedDial" icon={<SpeedDialIcon/>} direction="right" FabProps={{sx:{bgcolor:"red", '&:hover': {bgcolor: "red"}}}}>
-                <SpeedDialAction icon={<Delete/>} tooltipTitle="Supprimer" onClick={() => {handleDeleteReview(review.id)}}/>
-              </SpeedDial>
-            </CardActions>
-          </Card>
-        )}
+          {drink.reviews[0] && drink.reviews.map(review => 
+            <Card key={review.id}>
+              <CardHeader title={`Par ${review.name}`} subheader={review.date} action={ <Rating value={review.rate} /> } />
+              <CardContent sx={{ backgroundColor: 'teal', margin: "0.5rem", borderRadius: "10px" }}>
+                <Typography variant="body2" sx={{ fontStyle: "italic", color: "white" }}>{review.content}</Typography>
+              </CardContent>
+              {isAdminConnected &&
+                <CardActions>
+                  <SpeedDial ariaLabel="SpeedDial" icon={<SpeedDialIcon/>} direction="right" FabProps={{sx:{bgcolor:"red", '&:hover': {bgcolor: "red"}}}}>
+                    <SpeedDialAction icon={<Delete/>} tooltipTitle="Supprimer" onClick={() => {handleDeleteReview(review.id)}}/>
+                  </SpeedDial>
+                </CardActions>
+              }
+            </Card>
+          )}
 
-      </Stack>
+        </Stack>
+      </Container>
 
-      <Fab color="primary" sx={{ position: "fixed", bottom: "1rem", right: "1rem" }} onClick={handleClickOpen}>
+      <Fab color="primary" sx={{ position: "fixed", bottom: "1rem", right: "1rem" }} onClick={handleClickOpenDialog}>
         <EditNote />
       </Fab>
 
-      <Dialog open={open} onClose={handleClose}>
-        <Box component="form" onSubmit={handleSubmit}>
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <Box component="form" onSubmit={handleSubmitReview}>
           <DialogTitle>Ajouter un commentaire</DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection:"column", gap:"0.5rem"}}>
             <Box sx={{ display: 'flex', alignItems: "center", gap: "0.5rem", marginTop:"1rem" }}>
@@ -312,7 +293,7 @@ const Drink = () => {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Annuler</Button>
+            <Button onClick={handleCloseDialog}>Annuler</Button>
             <Button type="submit" variant="contained" autoFocus>Valider</Button>
           </DialogActions>
         </Box>

@@ -1,9 +1,9 @@
 //& Import Pages
-import Drink from "./Drink/Drink";
-import Dashboard from "./Dashboard/Dashboard";
-import Home from "./Home/Home";
-import Login from "./Login/Login";
-import NoPage from "./NoPage/NoPage";
-import Search from "./Search/Search";
+import Drink from "./Drink";
+import Dashboard from "./Dashboard";
+import Home from "./Home";
+import Login from "./Login";
+import NoPage from "./NoPage";
+import Search from "./Search";
 
 export { NoPage, Home, Login, Drink, Dashboard, Search };
