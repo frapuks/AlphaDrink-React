@@ -1,14 +1,23 @@
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Select, Snackbar, Stack, Switch, TextField, Typography } from "@mui/material";
-import "./Dashboard.scss"
-import { Add, Close, Edit } from "@mui/icons-material";
+import { Alert, Box, Button, Container, Dialog, DialogActions, DialogContent, DialogTitle, Divider, Fab, IconButton, List, ListItem, ListItemText, MenuItem, Select, Snackbar, Stack, Switch, TextField, Typography } from "@mui/material";
+import { Add, Edit } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 const Dashboard = () => {
+  // Utils
   const navigate = useNavigate();
+
+  // Variables
+  const token = localStorage.getItem("token");
+
+  // States
   const [categories, setCategories] = useState([{"id": 1,"name": "divers"}]);
   const [drinks, setDrinks] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [categoryId, setCategoryId] = useState(1);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   
+  // UseEffect
   useEffect(() => {
     const dataFetch = async () => {
       const response = await fetch("http://localhost:4100/categories/drinks");
@@ -24,21 +33,19 @@ const Dashboard = () => {
     dataFetch();
   }, []);
 
-  const handleClickEdit = (drink) => {
-    navigate(`/drink/${drink.id}`);
+  // Methods
+  const handleClickEdit = (drink) => { navigate(`/drink/${drink.id}`); }
+  const handleClickOpenDialog = () => { setOpenDialog(true); };
+  const handleCloseDialog = () => { setOpenDialog(false); };
+  const handleCategory = (event) => { setCategoryId(event.target.value); };
+  const handleCloseSnackbar = () => { setOpenSnackbar(false); };
+  
+  const handleClickLogout = () => {
+    localStorage.clear();
+    navigate("/");
   }
 
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => { setOpen(true); };
-  const handleClose = () => { setOpen(false); };
-
-  const [categoryId, setCategoryId] = useState(1);
-  const handleCategory = (event) => {
-    setCategoryId(event.target.value);
-  };
-
-  const handleChange = async (drink) => {
-    const token = localStorage.getItem("token");
+  const handleChangeAvailability = async (drink) => {
     const endUrl = drink.isavailable ? 'unavailable' : 'isavailable';
     const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
       method: "PATCH",
@@ -49,13 +56,9 @@ const Dashboard = () => {
     drinks.find(elem => elem.id === drink.id && (elem.isavailable = data.isavailable));
   }
 
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const handleCloseSnackbar = () => { setOpenSnackbar(false); };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const token = localStorage.getItem("token");
     const response = await fetch(`http://localhost:4100/drinks`, {
       method: "POST",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
@@ -69,30 +72,34 @@ const Dashboard = () => {
     });
     const data = await response.json();
     drinks.push(data);
-    setOpen(false);
+    setOpenDialog(false);
   }
 
+  
   return (
     <>
-      <List>
+      <Stack direction="row" justifyContent="center" sx={{padding:1}}>
+        <Button variant="contained" color="error" onClick={handleClickLogout}>Déconnexion</Button>
+      </Stack>
 
-        {drinks.map(drink =>
-          <ListItem key={drink.id}>
-            <ListItemText primary={drink.name} />
-            <Switch defaultChecked={drink.isavailable} name="isAvailable" onChange={async () => await handleChange(drink)}/>
-            <IconButton onClick={() => handleClickEdit(drink)}>
-              <Edit/>
-            </IconButton>
-          </ListItem>
-        )}
-        
-      </List>
+      <Container sx={{padding:0}}>
+        <List>
+          {drinks.map(drink =>
+            <Box key={drink.id}>
+              <ListItem>
+                <ListItemText primary={drink.name} />
+                <Switch defaultChecked={drink.isavailable} name="isAvailable" onChange={async () => await handleChangeAvailability(drink)}/>
+                <IconButton onClick={() => handleClickEdit(drink)}><Edit/></IconButton>
+              </ListItem>
+              <Divider/>
+            </Box>
+          )}
+        </List>
+      </Container>
+      
+      <Fab color="primary" sx={{position: 'fixed', bottom: "1rem", right: "1rem"}} onClick={handleClickOpenDialog}><Add /></Fab>
 
-      <Fab color="primary" sx={{position: 'fixed', bottom: "1rem", right: "1rem"}} onClick={handleClickOpen}>
-        <Add />
-      </Fab>
-
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
         <Box component="form" onSubmit={handleSubmit}>
           <DialogTitle>Ajouter une boisson</DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection:"column", gap:"0.5rem"}}>
@@ -100,9 +107,7 @@ const Dashboard = () => {
             <TextField name="maker" size="small" label="Fabricant" required/>
             <TextField name="infos" multiline rows={4} label="Infos" required/>
             <Select name="category" size="small" value={categoryId} onChange={handleCategory} required>
-              {categories.map(category =>
-                <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem>
-              )}
+              {categories.map(category => <MenuItem value={category.id} key={category.id}>{category.name}</MenuItem> )}
             </Select>
             <Stack direction="row" alignItems="center">
               <Typography>Alcool :</Typography>
@@ -110,7 +115,7 @@ const Dashboard = () => {
             </Stack>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Annuler</Button>
+            <Button onClick={handleCloseDialog}>Annuler</Button>
             <Button type="submit" variant="contained" autoFocus>Valider</Button>
           </DialogActions>
         </Box>

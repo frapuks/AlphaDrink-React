@@ -5,37 +5,29 @@ import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const AccordionDrink = ({drink}) => {
+  // Utils
   const navigate = useNavigate();
-
+  
+  // States
   const [expanded, setExpanded] = useState(false);
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+  const [likes, setLikes] = useState(drink.starscounter);
+  
+  // Methods
+  const redirect = () => { navigate(`/drink/${drink.id}`); }
+  const handleChange = (panel) => (event, isExpanded) => { setExpanded(isExpanded ? panel : false); };
 
   // TODO : Refacto this method (duplicated in Drink)
-  const [likes, setLikes] = useState(drink.starscounter);
   const handleLike = async (event) => {
     event.stopPropagation();
-    if (event.target.checked) {
-      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/addstar`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"}
-      });
-      const data = await response.json();
-      setLikes(data.starscounter);
-    } else {
-      const response = await fetch(`http://localhost:4100/drinks/${drink.id}/removestar`, {
-        method: "PATCH",
-        headers: {"Content-Type": "application/json"}
-      });
-      const data = await response.json();
-      setLikes(data.starscounter);
-    }
+    const endUrl = event.target.checked ? 'addstar' : 'removestar';
+    const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
+      method: "PATCH",
+      headers: {"Content-Type": "application/json"}
+    });
+    const data = await response.json();
+    setLikes(data.starscounter);
   };
 
-  const redirect = () => {
-    navigate(`/drink/${drink.id}`);
-  }
   
   return (
     <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
