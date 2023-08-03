@@ -45,7 +45,7 @@ const Home = () => {
             <Stack spacing="0.5rem" sx={{m:1}} key={category.id}>
               <Typography variant="h5" sx={{textTransform:"uppercase", textAlign:"center"}}>{category.name}</Typography>
 
-              {category.drinks.map(drink => ( (tabValue === 0 || !drink.isalcool) &&
+              {category.drinks.map(drink => ( drink.isavailable && (tabValue === 0 || !drink.isalcool) &&
                 <AccordionDrink drink={drink} key={drink.id}/>
               ))}
 
