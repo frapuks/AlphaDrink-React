@@ -1,8 +1,6 @@
-import "./NoPage.scss"
-
 const NoPage = () => {
   return (
-    <div>NoPage</div>
+    <div>404 Page not found</div>
   );
 };
 

@@ -1,16 +1,23 @@
-import { Divider, Stack } from "@mui/material";
-import { AccordionDrink, SearchBar, TabsAlcool } from "../../Components";
-import "./Search.scss"
+import { Container, Divider, Stack } from "@mui/material";
+import { AccordionDrink, SearchBar, TabsAlcool } from "../Components";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-const Search = () => {
+const Search = () => {  
+  // Variables
   const {search} = useParams();
+  
+  // States
   const [results, setResults] = useState([]);
-
+  const [tabValue, setTabValue] = useState(0);
+  
+  // UseEffect
   useEffect(() => {
     dataFetch(search);
   }, []);
+  
+  // Methods
+  const handleChange = (event, newValue) => { setTabValue(newValue); };
 
   const dataFetch = async (search) => {
     const response = await fetch(`http://localhost:4100/search`, {
@@ -22,17 +29,14 @@ const Search = () => {
     setResults(data);
   };
 
+  // TODO : refacto this method (duplicate in homePage)
   const handleSearch = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     await dataFetch(data.get('search'));
   }
 
-  const [tabValue, setTabValue] = useState(0);
-  const handleChange = (event, newValue) => {
-    setTabValue(newValue);
-  };
-
+  
   return (
     <>
       <SearchBar handleSearch={handleSearch}/>
@@ -40,11 +44,13 @@ const Search = () => {
       <TabsAlcool tabValue={tabValue} handleChange={handleChange}/>
       <Divider/>
 
-      <Stack spacing="0.5rem" sx={{m:1}}>
-        {results.map(drink => (tabValue === 0 || !drink.isalcool) &&
-          <AccordionDrink  drink={drink} key={drink.id}/>
-        )}
-      </Stack>
+      <Container sx={{padding:0}}>
+        <Stack spacing="0.5rem" sx={{m:1}}>
+          {results.map(drink => (tabValue === 0 || !drink.isalcool) &&
+            <AccordionDrink drink={drink} key={drink.id}/>
+          )}
+        </Stack>
+      </Container>
     </>
   );
 };

@@ -1,7 +1,4 @@
-import { useState } from "react";
-import "./TabsAlcool.scss"
 import { Tab, Tabs } from "@mui/material";
-
 
 const TabsAlcool = (data) => {
   return (

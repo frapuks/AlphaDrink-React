@@ -1,9 +1,6 @@
-import { useNavigate } from "react-router-dom";
-import "./SearchBar.scss"
 import { Box, Button, Stack, TextField } from "@mui/material";
 
 const SearchBar = ({handleSearch}) => {
-  
   return (
     <>
       <Box component="form" onSubmit={handleSearch}>
