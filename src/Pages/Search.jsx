@@ -1,4 +1,4 @@
-import { Container, Divider, Stack } from "@mui/material";
+import { Container, Divider, Stack, Typography } from "@mui/material";
 import { AccordionDrink, SearchBar, TabsAlcool } from "../Components";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -48,9 +48,11 @@ const Search = () => {
         <Stack spacing="0.5rem" sx={{m:1}}>
           {results.map(drink => (tabValue === 0 || !drink.isalcool) &&
             <AccordionDrink drink={drink} key={drink.id}/>
-          )}
+            )}
         </Stack>
       </Container>
+      
+      <Typography variant="body2" textAlign="center">Les résultats peuvent contenir des boissons non disponibles</Typography>
     </>
   );
 };
