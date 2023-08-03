@@ -35,7 +35,7 @@ const AccordionDrink = ({drink}) => {
       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography sx={{ width: '50%' }}>{drink.name}</Typography>
         <Rating value={drink.averagerate} size="small"  sx={{width:"35%"}}/>
-        <Badge badgeContent={likes} color="primary" >
+        <Badge badgeContent={likes} color="primary" sx={{alignSelf:"start"}}>
           <Checkbox icon={<FavoriteBorder />} checkedIcon={<Favorite />} sx={{ padding: "0" }} size="small" onClick={handleLike} name="favorite"/>
         </Badge>
       </AccordionSummary>
