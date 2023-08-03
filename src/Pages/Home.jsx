@@ -41,7 +41,7 @@ const Home = () => {
       <Divider />
 
       <Container sx={{padding:0}}>
-        {categories && categories.map(category => ( (tabValue === 0 || category.drinks.find(drink => !drink.isalcool)) &&
+        {categories && categories.map(category => ( (tabValue === 0 || category.drinks.find(drink => !drink.isalcool && drink.isavailable)) &&
             <Stack spacing="0.5rem" sx={{m:1}} key={category.id}>
               <Typography variant="h5" sx={{textTransform:"uppercase", textAlign:"center"}}>{category.name}</Typography>
 
