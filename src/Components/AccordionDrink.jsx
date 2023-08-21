@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const AccordionDrink = ({drink}) => {
   // Utils
   const navigate = useNavigate();
+  const urlApi = process.env.REACT_APP_URL_API;
   
   // States
   const [expanded, setExpanded] = useState(false);
@@ -20,7 +21,7 @@ const AccordionDrink = ({drink}) => {
   const handleLike = async (event) => {
     event.stopPropagation();
     const endUrl = event.target.checked ? 'addstar' : 'removestar';
-    const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
+    const response = await fetch(`${urlApi}/drinks/${drink.id}/${endUrl}`, {
       method: "PATCH",
       headers: {"Content-Type": "application/json"}
     });

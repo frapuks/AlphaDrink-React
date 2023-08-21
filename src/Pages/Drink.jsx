@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 const Drink = () => {
   // Utils
   const navigate = useNavigate();
+  const urlApi = process.env.REACT_APP_URL_API;
   
   // Variables
   const {drinkId} = useParams();
@@ -46,14 +47,14 @@ const Drink = () => {
     setIsAdminConnected(token && isAdmin ? true : false);
 
     const drinkFetch = async () => {
-      const response = await fetch(`http://localhost:4100/drinks/${drinkId}/reviews`);
+      const response = await fetch(`${urlApi}/drinks/${drinkId}/reviews`);
       const drink = await response.json();
       setDrink(drink);
       setLikes(drink.starscounter);
     };
 
     const categoriesFetch = async () => {
-      const response = await fetch(`http://localhost:4100/categories`);
+      const response = await fetch(`${urlApi}/categories`);
       const categories = await response.json();
       setCategories(categories);
     };
@@ -85,7 +86,7 @@ const Drink = () => {
     }
     drink.reviews.push(newReview);
 
-    const response = await fetch(`http://localhost:4100/reviews`, {
+    const response = await fetch(`${urlApi}/reviews`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -101,7 +102,7 @@ const Drink = () => {
   const handleSubmitUpdate = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
+    const response = await fetch(`${urlApi}/drinks/${drinkId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
       body: JSON.stringify({
@@ -118,7 +119,7 @@ const Drink = () => {
   }
   
   const handleDeleteReview = async (reviewId) => {
-    const response = await fetch(`http://localhost:4100/reviews/${reviewId}`, {
+    const response = await fetch(`${urlApi}/reviews/${reviewId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
     });
@@ -129,7 +130,7 @@ const Drink = () => {
   }
   
   const handleDeleteDrink = async () => {
-    const response = await fetch(`http://localhost:4100/drinks/${drinkId}`, {
+    const response = await fetch(`${urlApi}/drinks/${drinkId}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
     });
@@ -141,7 +142,7 @@ const Drink = () => {
   const handleLike = async (event) => {
     event.stopPropagation();
     const endUrl = event.target.checked ? 'addstar' : 'removestar';
-    const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
+    const response = await fetch(`${urlApi}/drinks/${drink.id}/${endUrl}`, {
       method: "PATCH",
       headers: {"Content-Type": "application/json"}
     });
