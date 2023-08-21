@@ -1,0 +1,9 @@
+version: '1'
+
+services:
+  alphadrink-api:
+    container_name: "alphadrink-react"
+    image: alphadrink-react
+    ports:
+      - '4101:${PORT}'
+    restart: always
