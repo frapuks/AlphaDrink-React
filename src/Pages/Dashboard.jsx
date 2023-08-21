@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 const Dashboard = () => {
   // Utils
   const navigate = useNavigate();
+  const urlApi = process.env.REACT_APP_URL_API;
 
   // Variables
   const token = localStorage.getItem("token");
@@ -20,7 +21,7 @@ const Dashboard = () => {
   // UseEffect
   useEffect(() => {
     const dataFetch = async () => {
-      const response = await fetch("http://localhost:4100/categories/drinks");
+      const response = await fetch(`${urlApi}/categories/drinks`);
       const data = await response.json();
       const list = [];
       for (const category of data) {
@@ -47,7 +48,7 @@ const Dashboard = () => {
 
   const handleChangeAvailability = async (drink) => {
     const endUrl = drink.isavailable ? 'unavailable' : 'isavailable';
-    const response = await fetch(`http://localhost:4100/drinks/${drink.id}/${endUrl}`, {
+    const response = await fetch(`${urlApi}/drinks/${drink.id}/${endUrl}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` }
     });
@@ -59,7 +60,7 @@ const Dashboard = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const response = await fetch(`http://localhost:4100/drinks`, {
+    const response = await fetch(`${urlApi}/drinks`, {
       method: "POST",
       headers: { "Content-Type": "application/json", authorization: `bearer ${token}` },
       body: JSON.stringify({

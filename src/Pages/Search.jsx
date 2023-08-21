@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 const Search = () => {  
   // Variables
   const {search} = useParams();
+  const urlApi = process.env.REACT_APP_URL_API;
   
   // States
   const [results, setResults] = useState([]);
@@ -20,7 +21,7 @@ const Search = () => {
   const handleChange = (event, newValue) => { setTabValue(newValue); };
 
   const dataFetch = async (search) => {
-    const response = await fetch(`http://localhost:4100/search`, {
+    const response = await fetch(`${urlApi}/search`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({search: search})
