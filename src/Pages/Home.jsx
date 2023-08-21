@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   // Utils
   const navigate = useNavigate();
+  const urlApi = process.env.REACT_APP_URL_API;
   
   // States
   const [categories, setCategories] = useState();
@@ -20,7 +21,7 @@ const Home = () => {
   const handleChangeTab = (event, newValue) => { setTabValue(newValue); };
 
   const dataFetch = async () => {
-    const response = await fetch("http://localhost:4100/categories/drinks");
+    const response = await fetch(`${urlApi}/categories/drinks`);
     const data = await response.json();
     setCategories(data);
   };

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const Login = () => {
   // Utils
   const navigate = useNavigate();
+  const urlApi = process.env.REACT_APP_URL_API;
   
   // States
   const [error, setError] = useState(false);
@@ -17,7 +18,7 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
-    const response = await fetch(`http://localhost:4100/users/login`, {
+    const response = await fetch(`${urlApi}/users/login`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
