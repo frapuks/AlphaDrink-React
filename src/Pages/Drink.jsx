@@ -96,7 +96,7 @@ const Drink = () => {
         drink_id: drinkId,
       })
     });
-    setOpen(false);
+    setOpenDialog(false);
   }
 
   const handleSubmitUpdate = async (event) => {
