@@ -5,5 +5,5 @@ services:
     container_name: "alphadrink-react"
     image: alphadrink-react
     ports:
-      - '4101:${PORT}'
+      - '6004:${PORT}'
     restart: always
